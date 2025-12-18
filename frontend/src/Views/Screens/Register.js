@@ -406,7 +406,7 @@ const Register = () => {
         <div className="login-section">
           <div className="login-container">
             <div className="login-header">
-              <h2>Let's Get Started..</h2>
+              <h2>Let's Get Started..2</h2>
               <p>Sign in to continue to Solar Admin.</p>
             </div>
             

@@ -19,8 +19,8 @@
 .env.test.local
 .env.production.local
 for copy pest
-solar_deploy_key
-solar_deploy_key.pub
+deploy_key
+deploy_key.pub
 
 npm-debug.log*
 yarn-debug.log*
