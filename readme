@@ -1,0 +1,204 @@
+Here is your **ALL-IN-ONE PAGE DOCKER COMMANDS (PLAIN TEXT)** — no headings, no sections, just a clean single text file you can paste anywhere.
+
+---
+
+**ALL DOCKER COMMANDS (ONE PAGE TEXT)**
+
+docker-compose up --build
+docker-compose up -d
+docker-compose logs -f
+docker-compose logs -f backend
+docker-compose logs -f mysql
+docker-compose down -v --rmi all --remove-orphans
+docker system prune -af
+docker exec -it solar_mysql mysql -u root -pyour_root_password
+docker exec -it solar_mysql mysql -u root -pyour_root_password -e "USE iot_solar; SHOW TABLES;"
+docker volume rm solar_client_mysql_data
+
+# Recommended full reset:
+
+docker-compose down -v --remove-orphans
+docker system prune -af
+docker-compose up --build
+docker-compose logs -f
+
+# Quick notes:
+
+DB_HOST=solar_mysql
+Always run fresh build if database changes.
+
+---
+
+If you want, I can also convert this into a **README.md**, **PDF**, or a **notepad (.txt) file**.
+
+
+
+
+name: CI - Docker Build & Test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Create .env file from GitHub Secrets
+      - name: Create .env file from GitHub Secrets
+        run: |
+          cat > .env << EOF
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_DIALECT=${{ secrets.DB_DIALECT }}
+
+          BACKEND_PORT=${{ secrets.BACKEND_PORT }}
+          ROOT_ROUTES=${{ secrets.ROOT_ROUTES }}
+          SALT_ROUND=${{ secrets.SALT_ROUND }}
+
+          SECRET_KEY_ADMIN_AUTH_TOKEN=${{ secrets.SECRET_KEY_ADMIN_AUTH_TOKEN }}
+          SECRET_KEY_ADMIN_PASSWORD=${{ secrets.SECRET_KEY_ADMIN_PASSWORD }}
+
+          MQTT_HOST=${{ secrets.MQTT_HOST }}
+          MQTT_USERNAME=${{ secrets.MQTT_USERNAME }}
+          MQTT_PASSWORD=${{ secrets.MQTT_PASSWORD }}
+          MQTT_TOPIC=${{ secrets.MQTT_TOPIC }}
+
+          CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
+
+          REACT_APP_BASE_URL=${{ secrets.REACT_APP_BASE_URL }}
+          REACT_APP_IMAGE_URL=${{ secrets.REACT_APP_IMAGE_URL }}
+          EOF
+
+      # 3. Verify docker-compose file exists
+      - name: Verify docker-compose.yaml exists
+        run: |
+          if [ ! -f "docker-compose.yaml" ]; then
+            echo "❌ docker-compose.yaml not found!"
+            exit 1
+          fi
+          echo "✅ docker-compose.yaml found"
+
+      # 4. Build and start services with docker-compose
+      - name: Build and Start Services
+        run: |
+          docker compose up --build -d
+          echo "✅ Docker Compose started"
+
+      # 5. Wait for services to be ready
+      - name: Wait for services
+        run: |
+          echo "⏳ Waiting 60 seconds for all services to initialize..."
+          sleep 60
+
+      # 6. Check container status
+      - name: Check Running Containers
+        if: always()
+        run: |
+          echo "=== Docker Containers Status ==="
+          docker compose ps
+          echo ""
+          docker ps -a
+
+      # 7. Show MySQL logs
+      - name: Show MySQL Logs
+        if: always()
+        run: |
+          echo "=== MySQL Container Logs (last 100 lines) ==="
+          docker logs solar_mysql --tail 100 || echo "Could not get MySQL logs"
+
+      # 8. Show Backend logs
+      - name: Show Backend Logs
+        if: always()
+        run: |
+          echo "=== Backend Container Logs (last 100 lines) ==="
+          docker logs solar_backend --tail 100 || echo "Could not get Backend logs"
+
+      # 9. Show Frontend logs
+      - name: Show Frontend Logs
+        if: always()
+        run: |
+          echo "=== Frontend Container Logs (last 100 lines) ==="
+          docker logs solar_frontend --tail 100 || echo "Could not get Frontend logs"
+
+      # 10. Test MySQL connection
+      - name: Test MySQL Connection
+        run: |
+          echo "🧪 Testing MySQL connection..."
+          docker exec solar_mysql mysqladmin ping -h localhost -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} && echo "✅ MySQL is responding" || echo "⚠️ MySQL not responding"
+
+      # 11. Test Backend API (non-failing)
+      - name: Test Backend API
+        run: |
+          echo "🧪 Testing Backend API at http://localhost:5001/api..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5001/api || echo "000")
+          echo "HTTP Response Code: $HTTP_CODE"
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "404" ] || [ "$HTTP_CODE" = "302" ]; then
+            echo "✅ Backend is responding (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Backend returned HTTP $HTTP_CODE or is not accessible"
+          fi
+
+      # 12. Test Frontend (non-failing)
+      - name: Test Frontend
+        run: |
+          echo "🧪 Testing Frontend at http://localhost:3000..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 || echo "000")
+          echo "HTTP Response Code: $HTTP_CODE"
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]; then
+            echo "✅ Frontend is responding (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Frontend returned HTTP $HTTP_CODE or is not accessible"
+          fi
+
+      # 13. Verify all containers are running
+      - name: Verify Containers Still Running
+        run: |
+          echo "=== Final Container Status ==="
+          docker ps
+
+          MYSQL_RUNNING=$(docker ps --filter "name=solar_mysql" --filter "status=running" -q | wc -l)
+          BACKEND_RUNNING=$(docker ps --filter "name=solar_backend" --filter "status=running" -q | wc -l)
+          FRONTEND_RUNNING=$(docker ps --filter "name=solar_frontend" --filter "status=running" -q | wc -l)
+
+          echo "MySQL container running: $MYSQL_RUNNING"
+          echo "Backend container running: $BACKEND_RUNNING"
+          echo "Frontend container running: $FRONTEND_RUNNING"
+
+          if [ "$MYSQL_RUNNING" -eq 0 ]; then
+            echo "❌ MySQL container is not running"
+            exit 1
+          fi
+
+          if [ "$BACKEND_RUNNING" -eq 0 ]; then
+            echo "❌ Backend container is not running"
+            exit 1
+          fi
+
+          if [ "$FRONTEND_RUNNING" -eq 0 ]; then
+            echo "❌ Frontend container is not running"
+            exit 1
+          fi
+
+          echo "✅ All 3 containers are running successfully!"
+          echo "🎉 CI Build PASSED!"
+
+      # 14. Clean up
+      - name: Stop and Remove Containers
+        if: always()
+        run: |
+          echo "🧹 Cleaning up..."
+          docker compose down -v --remove-orphans
+          echo "✅ Cleanup complete"

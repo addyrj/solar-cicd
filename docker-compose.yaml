@@ -1,0 +1,79 @@
+version: "3.9"
+
+services:
+  mysql:
+    build:
+      context: ./DB
+      dockerfile: Dockerfile
+    container_name: solar_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - solar_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    command: --default-authentication-plugin=mysql_native_password
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: solar_backend
+    restart: always
+    ports:
+      - "5001:5000"  # Optional for direct access
+    environment:
+      NODE_ENV: production
+      HOST: ${DB_HOST}
+      USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB: ${DB_NAME}
+      DIALECT: ${DB_DIALECT}
+      PORT: ${BACKEND_PORT}
+      ROOT_ROUTES: ${ROOT_ROUTES}
+      SALT_ROUND: ${SALT_ROUND}
+      SECRET_KEY_ADMIN_AUTH_TOKEN: ${SECRET_KEY_ADMIN_AUTH_TOKEN}
+      SECRET_KEY_ADMIN_PASSWORD: ${SECRET_KEY_ADMIN_PASSWORD}
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_USERNAME: ${MQTT_USERNAME}
+      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      MQTT_TOPIC: ${MQTT_TOPIC}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - solar_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_BASE_URL: ${REACT_APP_BASE_URL}
+        REACT_APP_IMAGE_URL: ${REACT_APP_IMAGE_URL}
+    container_name: solar_frontend
+    restart: always
+    ports:
+      - "80:80"  # Frontend accessible on VPS IP
+    depends_on:
+      - backend
+    networks:
+      - solar_network
+
+networks:
+  solar_network:
+    driver: bridge
+
+volumes:
+  mysql_data:

@@ -1,0 +1,422 @@
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import "../../Style/custom_main.css";
+import { useLocation } from "react-router-dom";
+import ReactApexChart from "react-apexcharts";
+import moment from "moment";
+import { sourcerChartOption } from "../../JavaScript/ChartMain";
+import NoData from "../Components/NoData";
+import { initDatatable } from "../../JavaScript/Datatables";
+import "datatables.net-responsive";
+import "datatables.net-buttons";
+import JSZip from "jszip";
+import "datatables.net-buttons/js/buttons.colVis";
+import "datatables.net-buttons/js/buttons.html5";
+import "datatables.net-buttons/js/buttons.print";
+
+const ShowGraph = () => {
+  const location = useLocation();
+  const { sourceData } = location.state || {};
+  const [filterData, setFilterData] = useState([]);
+  // const [selectDate, setSelectDate] = useState(
+  //   moment(new Date()).format("YYYY-MM-DD")
+  // );
+
+  const [selectDate, setSelectDate] = useState({
+    today: moment(new Date()).format("YYYY-MM-DD"),
+    yesterday: '',
+    last2Day: '',
+    last7Day: '',
+    initDate: '',
+    endDay: '',
+  });
+
+  const handleRadioState = (value) => {
+    if (value === "today") {
+      setSelectDate({
+        ...selectDate,
+        today: moment(new Date()).format("YYYY-MM-DD"),
+        yesterday: "",
+        last2Day: "",
+        last7Day: "",
+        initDate: "",
+        endDay: "",
+      });
+    } else if (value === "yesterday") {
+      let date = new Date();
+      date.setDate(date.getDate() - 1);
+
+      setSelectDate({
+        ...selectDate,
+        today: '',
+        yesterday: moment(date).format("YYYY-MM-DD"),
+        last2Day: "",
+        last7Day: "",
+        initDate: "",
+        endDay: "",
+      });
+    } else if (value === "last2") {
+      let date = new Date();
+      date.setDate(date.getDate() - 2);
+
+      setSelectDate({
+        ...selectDate,
+        today: '',
+        yesterday: '',
+        last2Day: moment(date).format("YYYY-MM-DD"),
+        last7Day: "",
+        initDate: "",
+        endDay: "",
+      });
+    } else if (value === "last7") {
+      let date = new Date();
+      date.setDate(date.getDate() - 7);
+
+      setSelectDate({
+        ...selectDate,
+        today: '',
+        yesterday: '',
+        last2Day: '',
+        last7Day: moment(date).format("YYYY-MM-DD"),
+        initDate: "",
+        endDay: "",
+      });
+    } else {
+      setSelectDate({
+        ...selectDate,
+        today: moment(new Date()).format("YYYY-MM-DD"),
+        yesterday: "",
+        last2Day: "",
+        last7Day: "",
+        initDate: "",
+        endDay: "",
+      });
+    }
+  };
+
+  // const applyButton = async (date) => {
+  //   const dateTime = moment(date).format("YYYY-MM-DD");
+
+  //   const filterGraphData = await sourceData.filter((item) => {
+  //     const actutalTime = moment(item.Time).format("YYYY-MM-DD");
+  //     return actutalTime == dateTime;
+  //   });
+  //   setFilterData(filterGraphData);
+  //   console.log("filter data is       ", filterGraphData);
+  // };
+
+  const applyButton = async () => {
+    const { today, yesterday, last2Day, last7Day, initDate, endDay } = selectDate;
+    if (today !== '') {
+      const dateTime = moment(today).format("YYYY-MM-DD");
+
+      const filterGraphData = await sourceData.filter((item) => {
+        const actutalTime = moment(item.Time).format("YYYY-MM-DD");
+        return actutalTime == dateTime;
+      });
+      setFilterData(filterGraphData);
+    } else if (yesterday !== '') {
+      const dateTime = moment(yesterday).format("YYYY-MM-DD");
+
+      const filterGraphData = await sourceData.filter((item) => {
+        const actutalTime = moment(item.Time).format("YYYY-MM-DD");
+        return actutalTime == dateTime;
+      });
+      setFilterData(filterGraphData);
+    } else if (last2Day !== '') {
+      const dateTime = moment(last2Day).format("YYYY-MM-DD");
+
+      const filterGraphData = await sourceData.filter((item) => {
+        const actutalTime = moment(item.Time).format("YYYY-MM-DD");
+        return actutalTime == dateTime;
+      });
+      setFilterData(filterGraphData);
+    } else if (last7Day !== '') {
+      const dateTime = moment(last7Day).format("YYYY-MM-DD");
+
+      const filterGraphData = await sourceData.filter((item) => {
+        const actutalTime = moment(item.Time).format("YYYY-MM-DD");
+        return actutalTime == dateTime;
+      });
+      setFilterData(filterGraphData);
+    } else {
+
+    }
+  };
+
+  useEffect(() => {
+    const dateTime = moment(new Date()).format("YYYY-MM-DD");
+    const filterGraphData = sourceData.filter((item) => {
+      const actutalTime = moment(item.Time).format("YYYY-MM-DD");
+      return actutalTime == dateTime;
+    });
+    setFilterData(filterGraphData);
+  }, []);
+
+  useEffect(() => {
+    if (filterData.length !== 0) {
+      window.JSZip = JSZip;
+      initDatatable();
+    }
+  }, [filterData]);
+
+  return (
+    <Wrapper>
+      <div className="content-wrapper">
+        <div className="container-full">
+          {/* Content Header (Page header) */}
+          {/* Main content */}
+          <section className="content">
+            <table
+              className="table border-0"
+              style={{ border: "none", borderWidth: "0px" }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    colSpan={3}
+                    style={{
+                      textAlign: "center",
+                      backgroundColor: "#0052cc",
+                      fontSize: "18px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    IND.DEL.del123
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Current Date</td>
+                  <td className="text-center">Select Date</td>
+                  <td>Action</td>
+                </tr>
+                <tr>
+                  <td>{selectDate.today}</td>
+                  <td className="text-center">
+                    <div className=" d-flex align-items-center justify-content-center">
+                      <input
+                        name="group1"
+                        type="radio"
+                        id="today"
+                        value="today"
+                        onChange={(e) => handleRadioState(e.target.value)}
+                      />
+                      <label for="today" style={{ marginRight: "10px" }}>
+                        Today
+                      </label>
+                      <input
+                        name="group1"
+                        type="radio"
+                        id="yesterday"
+                        value="yesterday"
+                        onChange={(e) => handleRadioState(e.target.value)}
+                      />
+                      <label for="yesterday" style={{ marginRight: "10px" }}>
+                        Yesterday
+                      </label>
+                      <input
+                        name="group1"
+                        type="radio"
+                        id="last2"
+                        value="last2"
+                        onChange={(e) => handleRadioState(e.target.value)}
+                      />
+                      <label for="last2" style={{ marginRight: "10px" }}>
+                        Last 2 Day
+                      </label>
+                      <input
+                        name="group1"
+                        type="radio"
+                        id="last7"
+                        value="last7"
+                        onChange={(e) => handleRadioState(e.target.value)}
+                      />
+                      <label for="last7" style={{ marginRight: "10px" }}>
+                        Last 7 Day
+                      </label>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-center mt-2">
+                      <input
+                        class="form-control"
+                        style={{ width: "180px", marginRight: "10px" }}
+                        id="example-date"
+                        type="date"
+                        value={selectDate.initDate}
+                        onChange={(e) => setSelectDate({
+                          ...selectDate,
+                          today: '',
+                          yesterday: '',
+                          last2Day: '',
+                          last7Day: '',
+                          initDate: e.target.value
+                        })}
+                      />
+                      From
+                      <input
+                        class="form-control"
+                        style={{ width: "180px", marginLeft: "10px" }}
+                        id="example-date"
+                        type="date"
+                        value={selectDate.endDay}
+                        onChange={(e) => setSelectDate({
+                          ...selectDate,
+                          today: '',
+                          yesterday: '',
+                          last2Day: '',
+                          last7Day: '',
+                          endDay: e.target.value
+                        })}
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => applyButton(selectDate)}
+                      className="buttonStyle"
+                    >
+                      Apply
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div className="col-xxl-6 col-xl-12 col-12">
+              <div className="box performance">
+                <div class="col-12 mb-20">
+                  <ReactApexChart
+                    options={sourcerChartOption.plotOptions}
+                    series={sourcerChartOption.series}
+                    type="line"
+                    height={400}
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div className="box">
+                  <div className="box-body">
+                    <div className="">
+                      <div id="toolbar"></div>
+                      <table
+                        id="example-datatables"
+                        className="table text-fade table-bordered table-hover margin-top-10 w-p100"
+                        style={{ width: "100%" }}
+                      >
+                        <thead>
+                          <tr className="text-dark">
+                            <th>S.No</th>
+                            <th>UID</th>
+                            <th>Pv Voltage</th>
+                            <th>PV Current</th>
+                            <th>Battery Voltage</th>
+                            <th>Battery Current</th>
+                            <th>Load Voltage</th>
+                            <th>Load Current</th>
+                            <th>Temperature</th>
+                            <th>Time</th>
+                          </tr>
+                        </thead>
+                        {filterData.length === 0 ? (
+                          <tbody>
+                            <td colSpan={10}>
+                              <NoData />
+                            </td>
+                          </tbody>
+                        ) : (
+                          <tbody>
+                            {filterData.map((item, index) => {
+                              return (
+                                <tr>
+                                  <td
+                                    className="text-dark"
+                                    style={{ fontSize: "16px" }}
+                                  >
+                                    <input
+                                      class="form-check-input"
+                                      type="checkbox"
+                                      value={item.ID}
+                                      id={item.ID}
+                                    />
+                                    {index}
+                                  </td>
+                                  <td>{item.UID}</td>
+                                  <td>{item.PvVolt}</td>
+                                  <td>{item.PvCur}</td>
+                                  <td>{item.BatVoltage}</td>
+                                  <td>{item.BatCurrent}</td>
+                                  <td>{item.LoadVoltage}</td>
+                                  <td>{item.LoadCurrent}</td>
+                                  <td>{item.Temperature}</td>
+                                  <td>{item.Time}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        )}
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          {/* /.content */}
+        </div>
+      </div>
+    </Wrapper>
+  );
+};
+
+const Wrapper = styled.section`
+  .performance {
+    height: 100% !important;
+  }
+  .graphlayout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 5px;
+  }
+  .chartStyle {
+    margin: 20px 0;
+  }
+  .apexcharts-menu {
+    background-color: #f26b0f;
+  }
+  .apexcharts-menu-item {
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1;
+  }
+  .settingStyle {
+    cursor: pointer;
+    &:active,
+    &:hover {
+      background-color: #0052cc;
+      border: 1px solid white;
+      padding: 5px;
+    }
+  }
+  .buttonStyle {
+    background: ${({ theme }) => theme.colors.themeColor};
+    padding: 10px 30px;
+    color: white;
+    width: 150px;
+    margin: 5px;
+    &:hover,
+    &:active {
+      background-color: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border: 1px solid;
+      border-color: ${({ theme }) => theme.colors.themeColor};
+      transform: scale(0.96);
+    }
+  }
+`;
+
+export default ShowGraph;
