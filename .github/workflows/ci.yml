@@ -1,4 +1,4 @@
-name: CI - Docker Build & Test
+name: CI - Docker Build & Test on GITHUB
 
 on:
   pull_request:

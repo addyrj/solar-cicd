@@ -21,6 +21,7 @@
 for copy pest
 deploy_key
 deploy_key.pub
+main.yml
 
 npm-debug.log*
 yarn-debug.log*
