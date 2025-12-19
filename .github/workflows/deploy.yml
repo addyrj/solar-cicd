@@ -31,6 +31,7 @@ jobs:
             
             echo "🧹 Cleaning up old images..."
             docker image prune -af || true
+           
             
             echo "🔨 Building and starting containers..."
             docker compose up -d --build
