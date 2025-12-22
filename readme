@@ -1,53 +1,221 @@
-Here is your **ALL-IN-ONE PAGE DOCKER COMMANDS (PLAIN TEXT)** — no headings, no sections, just a clean single text file you can paste anywhere.
-
----
-
-**ALL DOCKER COMMANDS (ONE PAGE TEXT)**
+# List running containers
 docker ps
-Then stop all running containers:  docker stop $(docker ps -q)
-Remove all containers:   docker rm $(docker ps -aq)
-Remove related Docker images   docker images
-Remove all images:   docker rmi $(docker images -q)
-If it shows dependency errors: docker rmi -f $(docker images -q)
+
+# Stop all running containers
+docker stop $(docker ps -q)
+
+# Remove all containers
+docker rm $(docker ps -aq)
+
+# List all Docker images
+docker images
+
+# Remove all images
+docker rmi $(docker images -q)
+
+# If you get dependency errors
+docker rmi -f $(docker images -q)
+
+# Stop and remove all containers, networks, and volumes defined in docker-compose
 docker compose down -v
 
-
-
+# Build all images without cache
 docker compose build --no-cache
-docker compose up -d
-docker-compose logs -f
-docker-compose logs -f backend
-docker-compose logs -f mysql
-docker compose logs -f  frontend
 
+# View logs in real-time
+docker compose logs -f
+docker compose logs -f backend
+docker compose logs -f mysql
+docker compose logs -f frontend
+
+# Tail last 100 lines of logs for individual containers
 docker logs solar_mysql --tail 100
 docker logs solar_backend --tail 100
 docker logs solar_frontend --tail 100
 
-
-
-
-
+# Full cleanup with removal of containers, images, volumes, and orphans
 docker-compose down -v --rmi all --remove-orphans
 docker system prune -af
+
+# Enter MySQL container
 docker exec -it solar_mysql mysql -u root -pyour_root_password
+
+# Run MySQL command directly
 docker exec -it solar_mysql mysql -u root -pyour_root_password -e "USE iot_solar; SHOW TABLES;"
+
+# Remove a specific Docker volume (⚠️ deletes DB data)
 docker volume rm solar_client_mysql_data
 
-# Recommended full reset:
-
+# Recommended full reset
 docker-compose down -v --remove-orphans
 docker system prune -af
 
-
-
-
-4️⃣ Remove volumes (⚠️ deletes DB data)
-Only run this if you don’t need MySQL data:
+# Remove all Docker volumes (⚠️ deletes all DB data)
 docker volume rm $(docker volume ls -q)
-Or full cleanup:
+
+# Full cleanup including volumes
 docker system prune -a --volumes
 
 
+# List running containers
+docker ps
 
+# List all containers (including stopped)
+docker ps -a
 
+# Stop all running containers
+docker stop $(docker ps -q)
+
+# Stop a specific container
+docker stop solar_backend
+docker stop solar_frontend
+docker stop solar_mysql
+
+# Start a stopped container
+docker start solar_backend
+docker start solar_frontend
+docker start solar_mysql
+
+# Restart a container
+docker restart solar_backend
+
+# Remove all containers
+docker rm $(docker ps -aq)
+
+# Remove a specific container
+docker rm solar_backend
+
+# Inspect container details
+docker inspect solar_backend
+
+# Show container resource usage (CPU, Memory)
+docker stats
+
+# -------------------------
+# IMAGE MANAGEMENT
+# -------------------------
+
+# List all images
+docker images
+
+# Remove all images
+docker rmi $(docker images -q)
+
+# Remove a specific image
+docker rmi solar-cicd-backend
+
+# Force remove images with dependencies
+docker rmi -f $(docker images -q)
+
+# Build images without cache
+docker compose build --no-cache
+
+# -------------------------
+# DOCKER COMPOSE
+# -------------------------
+
+# Stop and remove containers, networks, volumes
+docker compose down -v
+
+# Remove containers, images, volumes, and orphans
+docker-compose down -v --rmi all --remove-orphans
+
+# Start services in background
+docker compose up -d
+
+# Start services in foreground
+docker compose up
+
+# View logs in real-time
+docker compose logs -f
+docker compose logs -f backend
+docker compose logs -f frontend
+docker compose logs -f mysql
+
+# -------------------------
+# LOGS & DEBUGGING
+# -------------------------
+
+# Tail last 100 lines of a container log
+docker logs solar_mysql --tail 100
+docker logs solar_backend --tail 100
+docker logs solar_frontend --tail 100
+
+# Follow logs continuously
+docker logs -f solar_backend
+
+# Execute commands inside a running container
+docker exec -it solar_backend bash
+docker exec -it solar_mysql bash
+
+# Run MySQL command directly
+docker exec -it solar_mysql mysql -u root -pyour_root_password
+docker exec -it solar_mysql mysql -u root -pyour_root_password -e "USE iot_solar; SHOW TABLES;"
+
+# -------------------------
+# VOLUME MANAGEMENT
+# -------------------------
+
+# List all volumes
+docker volume ls
+
+# Remove a specific volume
+docker volume rm solar_client_mysql_data
+
+# Remove all volumes (⚠️ deletes DB data)
+docker volume rm $(docker volume ls -q)
+
+# -------------------------
+# NETWORK MANAGEMENT
+# -------------------------
+
+# List Docker networks
+docker network ls
+
+# Inspect a network
+docker network inspect bridge
+
+# Create a new network
+docker network create my_network
+
+# Connect a container to a network
+docker network connect my_network solar_backend
+
+# Disconnect a container from a network
+docker network disconnect my_network solar_backend
+
+# -------------------------
+# SYSTEM CLEANUP
+# -------------------------
+
+# Remove unused containers, networks, images, and caches
+docker system prune -af
+
+# Full cleanup including volumes
+docker system prune -a --volumes
+
+# -------------------------
+# IMAGE & CONTAINER TAGGING
+# -------------------------
+
+# Tag an image
+docker tag solar-cicd-frontend myusername/solar-frontend:latest
+
+# Push an image to Docker Hub
+docker push myusername/solar-frontend:latest
+
+# Pull an image from Docker Hub
+docker pull myusername/solar-frontend:latest
+
+# -------------------------
+# OTHER USEFUL COMMANDS
+# -------------------------
+
+# Show container IP address
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' solar_backend
+
+# Copy files from container to host
+docker cp solar_backend:/app/file.txt ./file.txt
+
+# Copy files from host to container
+docker cp ./file.txt solar_backend:/app/file.txt
