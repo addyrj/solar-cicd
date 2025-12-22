@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 04, 2025 at 09:18 AM
+-- Generation Time: Dec 19, 2025 at 11:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -111,8 +111,7 @@ INSERT INTO `bfootlogin` (`ID`, `UserID`, `username`, `password`, `email`, `home
 (1, '3I0N6B03258IOP7', 'rewBFI', '$2y$10$6sMOnk1NrKBMdpo0uVbAmOfhWU/dkD69TdRZV0n2cwNAo2i6sX/NW', 'rverma1@everon.in', '/dcpm/dcpmindex.php Edit-122.161.87.215 Edit-122.161.87.215 Edit-122.161.87.215 Edit-122.161.87.215', 'Yes', 'd18459ce1c3f459dc93301975abbc9e5', '', 'Yes', '', '2024-01-29 10:30:19', 'admin'),
 (14, 'Y6GYTUUYKUUBUY', 'admin1', 'U2FsdGVkX18PMQii0qQ+k9Nhie/Inppv5SY3tDkRQE0=', 'rverma@everon.in', '94.6 Edit-49.15.232.175 Edit-117.205.16.105', 'Yes', 'd5e2e301ac5f53770e334b5ca8a0c9ae', NULL, 'Yes', '47.30.171.60', '2025-08-20 12:42:01', 'superadmin'),
 (27, NULL, 'newadmin', 'U2FsdGVkX18Qd+MQsEcNQdXeuzz7LZBvC4+HufGcNnUK6YsJAGSTehxY4/yzyYdW', 'newadmin@example.com', '', 'Yes', NULL, NULL, 'No', '', '2025-08-22 12:00:53', 'admin'),
-(29, NULL, 'newadmin23', 'U2FsdGVkX1+uXVogXye+8W9gVJUozW1qZlqMD0M5rcbKEBkgfcCQohykhKdyZojL', 'newadmin@example.com', '', 'Yes', NULL, NULL, 'No', '', '2025-08-22 12:33:07', 'admin'),
-(30, NULL, 'newadmin2', 'U2FsdGVkX1+5nvfdqrlFRqCfkfyQbQFdpJvChwxWun59KL2cB1ULyXFJvbgyx9PU', 'newadmin@example.com', '', 'Yes', NULL, NULL, 'No', '', '2025-08-22 12:43:03', 'admin');
+(29, NULL, 'newadmin23', 'U2FsdGVkX1+uXVogXye+8W9gVJUozW1qZlqMD0M5rcbKEBkgfcCQohykhKdyZojL', 'newadmin@example.com', '', 'Yes', NULL, NULL, 'No', '', '2025-08-22 12:33:07', 'admin');
 
 -- --------------------------------------------------------
 
@@ -481,7 +480,10 @@ INSERT INTO `newdevicelocationdetails` (`ID`, `UID`, `Country`, `State`, `Distri
 (185, 'IND.RAJ.SHA150', 'India', 'Rajasthan', 'Jaipur', 'Sambhar', '', '', '', '', 'Maya Varma', '7976968234', 'Kishan Lal', '9983171852', NULL, NULL, NULL, '2025-08-06 10:04:30', '2025-08-06 10:04:30'),
 (186, 'IND.RAJ.SHA151', 'India', 'Rajasthan', 'Jaipur', 'Sambhar', '', '', '', '', 'Tanvee  Khichi', '7877708338', 'Kishan Lal', '9983171852', NULL, NULL, NULL, '2025-08-06 10:05:34', '2025-08-06 10:05:34'),
 (187, 'IND.RAJ.SHA51', 'india', 'Rajashtan', 'Jaipur', 'Shabhar', 'Moruda', 'Kamla / Ramnarayan ', '9636517310', '26.826813, 75.158610', 'Kanta Varma', '7877771379', 'Kishan Lal ', '', NULL, NULL, NULL, '2025-08-07 08:56:07', '2025-08-07 08:56:07'),
-(194, '3088775112', 'India', 'Rajasthan', '', '', '', '', '', '', '', '', '', '', '', '2025-11-13', '', '2025-11-20 11:32:40', '2025-11-20 11:32:40');
+(194, '3088775112', 'India', 'Rajasthan', '', '', '', '', '', '', '', '', '', '', '', '2025-11-13', '', '2025-11-20 11:32:40', '2025-11-20 11:32:40'),
+(195, 'IND.RAJ.SHA201', 'India', 'Rajasthan', 'Jaipur', '', '', '', '', '', '', '', '', '', '', '2025-12-18', '', '2025-12-18 11:18:27', '2025-12-18 11:18:27'),
+(196, '3735464109', 'India', '', '', '', '', '', '', '', '', '', '', '', '', '0000-00-00', '', '2025-12-18 11:46:02', '2025-12-18 11:46:02'),
+(197, '1009261026', 'India', '', '', '', '', '', '', '', '', '', '', '', '', '0000-00-00', '', '2025-12-19 10:01:06', '2025-12-19 10:01:06');
 
 -- --------------------------------------------------------
 
@@ -22629,7 +22631,18 @@ INSERT INTO `solarcharger` (`ID`, `Location`, `UID`, `BatVoltage`, `BatCurrent`,
 (5581726, 'IND.DEL.del123', '3088775112', 13.5, 0, -0, 0, 13.5, 0, 0, 0.133, 0, '2025-11-20 12:23:44', '2025-11-20 12:23:43', 'MQTT'),
 (5581727, 'IND.DEL.del123', '3088775112', 11.5, 0, -0, 0, 11.5, 0, 0, 0.137, 0, '2025-11-24 12:16:57', '2025-11-22 22:06:16', 'MQTT'),
 (5581728, 'IND.DEL.del123', '3088775112', 13.1, 0, -0, 0, 13.1, 0, 0, 0.1, 0, '2025-12-02 12:38:44', '2025-11-26 06:58:49', 'MQTT'),
-(5581729, 'IND.DEL.del123', '3088775112', 14.2, 1.7, 20.6, 1.2, 14.2, 0, 0, 0.1, 0, '2025-12-03 10:39:24', '2025-12-03 08:40:44', 'MQTT');
+(5581729, 'IND.DEL.del123', '3088775112', 14.2, 1.7, 20.6, 1.2, 14.2, 0, 0, 0.1, 0, '2025-12-03 10:39:24', '2025-12-03 08:40:44', 'MQTT'),
+(5581730, 'IND.DEL.del123', '3088775112', 12.8, 0, -0, 0, 12.8, 0, 0, 0.1, 0, '2025-12-04 09:42:11', '2025-12-04 09:41:18', 'MQTT'),
+(5581731, 'IND.DEL.del123', '3088775112', 12.8, 0, -0, 0, 12.8, 0, 0, 0.1, 0, '2025-12-04 11:12:26', '2025-12-04 11:11:45', 'MQTT'),
+(5581732, 'IND.Raj.SHA201', '3735464109', 10.2, 0, 11.4, 0.1, 10.2, 0, 0, 0.002, 0, '2025-12-18 11:46:29', '2025-12-18 11:40:16', 'MQTT'),
+(5581733, 'IND.Raj.SHA201', '3735464109', 10.2, 0, 10.9, 0, 10.2, 0, 0, 0.002, 0, '2025-12-18 11:56:47', '2025-12-18 11:56:44', 'MQTT'),
+(5581734, 'IND.Raj.SHA201', '3735464109', 10.1, 0, 11, 0, 10.1, 0, 0, 0.002, 0, '2025-12-18 12:10:21', '2025-12-18 12:10:17', 'MQTT'),
+(5581735, 'IND.Raj.SHA201', '3735464109', 10.6, 0.1, 15.7, 0.1, 10.6, 0, 0, 0.005, 0, '2025-12-19 09:58:39', '2025-12-19 09:58:37', 'MQTT'),
+(5581736, 'IND.RAJ.SHA202', '1009261026', 10.8, 0, -0, 0, 10.8, 0, 0, 1, 0, '2025-12-19 10:01:43', '2025-12-19 10:00:46', 'MQTT'),
+(5581737, 'IND.Raj.SHA201', '3735464109', 10.6, 0.1, 15.6, 0.1, 10.6, 0, 0, 0.005, 0, '2025-12-19 10:13:40', '2025-12-19 10:13:39', 'MQTT'),
+(5581738, 'IND.RAJ.SHA202', '1009261026', 10.7, 0, -0, 0, 10.7, 0, 0, 1, 0, '2025-12-19 10:15:50', '2025-12-19 10:15:48', 'MQTT'),
+(5581739, 'IND.Raj.SHA201', '3735464109', 10.4, 0.1, 16.4, 0.1, 10.4, 0, 0, 0.006, 0, '2025-12-19 10:28:41', '2025-12-19 10:28:39', 'MQTT'),
+(5581740, 'IND.RAJ.SHA202', '1009261026', 10.3, 0, -0, 0, 10.3, 0, 0, 1, 0, '2025-12-19 10:30:49', '2025-12-19 10:30:48', 'MQTT');
 
 -- --------------------------------------------------------
 
@@ -22859,7 +22872,7 @@ ALTER TABLE `mobiledevices`
 -- AUTO_INCREMENT for table `newdevicelocationdetails`
 --
 ALTER TABLE `newdevicelocationdetails`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=195;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=198;
 
 --
 -- AUTO_INCREMENT for table `partner`
@@ -22883,7 +22896,7 @@ ALTER TABLE `settings`
 -- AUTO_INCREMENT for table `solarcharger`
 --
 ALTER TABLE `solarcharger`
-  MODIFY `ID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5581730;
+  MODIFY `ID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5581741;
 
 --
 -- AUTO_INCREMENT for table `uidip`
