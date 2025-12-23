@@ -55,25 +55,20 @@ services:
     networks:
       - solar_network
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        REACT_APP_BASE_URL: ${REACT_APP_BASE_URL}
-        REACT_APP_IMAGE_URL: ${REACT_APP_IMAGE_URL}
-    container_name: solar_frontend
-    restart: always
-    ports:
-      - "80:80"  # Frontend accessible on VPS IP
-    depends_on:
-      - backend
-    networks:
-      - solar_network
-
-networks:
-  solar_network:
-    driver: bridge
-
-volumes:
-  mysql_data:
+# Change this section in frontend service
+frontend:
+  build:
+    context: ./frontend
+    dockerfile: Dockerfile
+    args:
+      REACT_APP_BASE_URL: ${REACT_APP_BASE_URL}
+      REACT_APP_IMAGE_URL: ${REACT_APP_IMAGE_URL}
+  container_name: solar_frontend
+  restart: always
+  ports:
+    - "80:80"  # This makes it accessible on port 80
+    - "443:443"  # Add if you want HTTPS later
+  depends_on:
+    - backend
+  networks:
+    - solar_network

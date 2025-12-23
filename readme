@@ -1,221 +1,150 @@
-# List running containers
-docker ps
 
-# Stop all running containers
-docker stop $(docker ps -q)
+# Always check what's running first
+docker ps                      # List running containers
+docker ps -a                   # List ALL containers (including stopped)
+docker stats                   # Live resource usage (CPU, Memory)
+docker images                  # List all images
+docker volume ls               # List all volumes
+docker network ls              # List all networks
 
-# Remove all containers
-docker rm $(docker ps -aq)
+# 🔄 Workflow B: Rebuild & Restart
+docker compose down                   # Stop containers
+docker compose build --no-cache       # Rebuild without cache
+docker compose up -d                  # Start fresh
 
-# List all Docker images
-docker images
+# 🔄 Workflow C: Full Reset (Keep Data)
+docker compose down                   # Stop and remove containers
+docker system prune -f                # Clean unused objects
+docker compose build                  # Rebuild
+docker compose up -d                  # Start
 
-# Remove all images
-docker rmi $(docker images -q)
+# 🔄 Workflow D: Nuclear Reset (Lose Data)
+docker compose down -v --rmi all --remove-orphans  # Remove EVERYTHING
+docker system prune -a --volumes -f   # Deep clean
+docker compose build --no-cache       # Fresh build
+docker compose up -d                  # Start
 
-# If you get dependency errors
-docker rmi -f $(docker images -q)
 
-# Stop and remove all containers, networks, and volumes defined in docker-compose
-docker compose down -v
+# Stop/Start specific
+docker stop solar_backend && docker start solar_backend
+docker stop $(docker ps -q)           # Stop all running
+docker start $(docker ps -aq)         # Start all stopped
 
-# Build all images without cache
-docker compose build --no-cache
+# Remove specific
+docker rm solar_backend               # Remove container
+docker rmi solar-cicd-backend         # Remove image
+docker volume rm solar_client_mysql_data  # Remove volume
 
-# View logs in real-time
-docker compose logs -f
-docker compose logs -f backend
-docker compose logs -f mysql
-docker compose logs -f frontend
+# 2️⃣ QUICK NAVIGATION & DEBUG
+# ========================================
+# Jump into containers
+docker exec -it solar_backend bash      # Enter backend container
+docker exec -it solar_mysql bash        # Enter MySQL container
+docker exec -it solar_frontend sh       # Enter frontend container
 
-# Tail last 100 lines of logs for individual containers
-docker logs solar_mysql --tail 100
-docker logs solar_backend --tail 100
-docker logs solar_frontend --tail 100
+# View logs
+docker logs solar_backend --tail 50 -f  # Tail last 50 lines + follow
+docker logs solar_mysql --tail 100      # Last 100 lines
+docker logs solar_frontend              # View all logs
 
-# Full cleanup with removal of containers, images, volumes, and orphans
-docker-compose down -v --rmi all --remove-orphans
-docker system prune -af
+# 3️⃣ COMMON WORKFLOWS
+# ========================================
 
-# Enter MySQL container
+# 🔄 Workflow A: Service Restart (Quick)
+docker compose restart                # Restart all services
+docker compose restart backend        # Restart specific service
+
+
+
+# 4️⃣ DATABASE SPECIFIC
+# ========================================
+# MySQL Operations
 docker exec -it solar_mysql mysql -u root -pyour_root_password
+docker exec -it solar_mysql mysql -u root -p -e "SHOW DATABASES;"
+docker exec -it solar_mysql mysql -u root -p -e "USE iot_solar; SHOW TABLES;"
 
-# Run MySQL command directly
-docker exec -it solar_mysql mysql -u root -pyour_root_password -e "USE iot_solar; SHOW TABLES;"
+# Backup database (from host)
+docker exec solar_mysql mysqldump -u root -pyour_root_password iot_solar > backup.sql
 
-# Remove a specific Docker volume (⚠️ deletes DB data)
-docker volume rm solar_client_mysql_data
+# Restore database
+docker exec -i solar_mysql mysql -u root -pyour_root_password iot_solar < backup.sql
 
-# Recommended full reset
-docker-compose down -v --remove-orphans
-docker system prune -af
-
-# Remove all Docker volumes (⚠️ deletes all DB data)
-docker volume rm $(docker volume ls -q)
-
-# Full cleanup including volumes
-docker system prune -a --volumes
+# 5️⃣ CONTAINER MANAGEMENT (Granular)
+# ========================================
 
 
-# List running containers
-docker ps
+# 6️⃣ CLEANUP STRATEGIES
+# ========================================
+# Level 1: Light cleanup
+docker system prune -f
 
-# List all containers (including stopped)
-docker ps -a
+# Level 2: Medium cleanup (keeps volumes)
+docker system prune -a -f
 
-# Stop all running containers
-docker stop $(docker ps -q)
+# Level 3: Deep cleanup (removes volumes - DATA LOSS!)
+docker system prune -a --volumes -f
 
-# Stop a specific container
-docker stop solar_backend
-docker stop solar_frontend
-docker stop solar_mysql
+# Level 4: Complete reset
+docker-compose down -v --rmi all --remove-orphans
+docker system prune -a --volumes -f
+docker volume rm $(docker volume ls -q) 2>/dev/null || true
 
-# Start a stopped container
-docker start solar_backend
-docker start solar_frontend
-docker start solar_mysql
-
-# Restart a container
-docker restart solar_backend
-
-# Remove all containers
-docker rm $(docker ps -aq)
-
-# Remove a specific container
-docker rm solar_backend
-
-# Inspect container details
+# 7️⃣ MONITORING & INSPECTION
+# ========================================
+# Container details
 docker inspect solar_backend
-
-# Show container resource usage (CPU, Memory)
-docker stats
-
-# -------------------------
-# IMAGE MANAGEMENT
-# -------------------------
-
-# List all images
-docker images
-
-# Remove all images
-docker rmi $(docker images -q)
-
-# Remove a specific image
-docker rmi solar-cicd-backend
-
-# Force remove images with dependencies
-docker rmi -f $(docker images -q)
-
-# Build images without cache
-docker compose build --no-cache
-
-# -------------------------
-# DOCKER COMPOSE
-# -------------------------
-
-# Stop and remove containers, networks, volumes
-docker compose down -v
-
-# Remove containers, images, volumes, and orphans
-docker-compose down -v --rmi all --remove-orphans
-
-# Start services in background
-docker compose up -d
-
-# Start services in foreground
-docker compose up
-
-# View logs in real-time
-docker compose logs -f
-docker compose logs -f backend
-docker compose logs -f frontend
-docker compose logs -f mysql
-
-# -------------------------
-# LOGS & DEBUGGING
-# -------------------------
-
-# Tail last 100 lines of a container log
-docker logs solar_mysql --tail 100
-docker logs solar_backend --tail 100
-docker logs solar_frontend --tail 100
-
-# Follow logs continuously
-docker logs -f solar_backend
-
-# Execute commands inside a running container
-docker exec -it solar_backend bash
-docker exec -it solar_mysql bash
-
-# Run MySQL command directly
-docker exec -it solar_mysql mysql -u root -pyour_root_password
-docker exec -it solar_mysql mysql -u root -pyour_root_password -e "USE iot_solar; SHOW TABLES;"
-
-# -------------------------
-# VOLUME MANAGEMENT
-# -------------------------
-
-# List all volumes
-docker volume ls
-
-# Remove a specific volume
-docker volume rm solar_client_mysql_data
-
-# Remove all volumes (⚠️ deletes DB data)
-docker volume rm $(docker volume ls -q)
-
-# -------------------------
-# NETWORK MANAGEMENT
-# -------------------------
-
-# List Docker networks
-docker network ls
-
-# Inspect a network
-docker network inspect bridge
-
-# Create a new network
-docker network create my_network
-
-# Connect a container to a network
-docker network connect my_network solar_backend
-
-# Disconnect a container from a network
-docker network disconnect my_network solar_backend
-
-# -------------------------
-# SYSTEM CLEANUP
-# -------------------------
-
-# Remove unused containers, networks, images, and caches
-docker system prune -af
-
-# Full cleanup including volumes
-docker system prune -a --volumes
-
-# -------------------------
-# IMAGE & CONTAINER TAGGING
-# -------------------------
-
-# Tag an image
-docker tag solar-cicd-frontend myusername/solar-frontend:latest
-
-# Push an image to Docker Hub
-docker push myusername/solar-frontend:latest
-
-# Pull an image from Docker Hub
-docker pull myusername/solar-frontend:latest
-
-# -------------------------
-# OTHER USEFUL COMMANDS
-# -------------------------
-
-# Show container IP address
 docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' solar_backend
 
-# Copy files from container to host
-docker cp solar_backend:/app/file.txt ./file.txt
+# Resource monitoring
+docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}"
 
-# Copy files from host to container
-docker cp ./file.txt solar_backend:/app/file.txt
+# Process list inside container
+docker top solar_backend
+
+# 8️⃣ DOCKER COMPOSE SPECIFIC
+# ========================================
+# View logs
+docker compose logs -f               # All services
+docker compose logs -f backend       # Single service
+docker compose logs --tail=50 -f     # Last 50 lines
+
+# Service management
+docker compose ps                    # Show compose services status
+docker compose config                # Validate compose file
+docker compose pull                  # Pull latest images
+docker compose pause                 # Pause all services
+docker compose unpause               # Unpause all services
+
+# 9️⃣ FILE OPERATIONS
+# ========================================
+# Copy files
+docker cp solar_backend:/app/config.json ./config-backup.json
+docker cp ./updated-config.json solar_backend:/app/config.json
+
+# 1️⃣0️⃣ NETWORK OPERATIONS
+# ========================================
+docker network inspect bridge
+docker network create my_app_network
+docker network connect my_app_network solar_backend
+docker network disconnect my_app_network solar_backend
+
+# ========================================
+# 🎯 QUICK REFERENCE - MOST USED COMMANDS
+# ========================================
+
+# Daily drivers:
+# docker compose logs -f
+# docker compose restart
+# docker exec -it [container] bash
+# docker compose down && docker compose up -d
+
+# Weekly cleanup:
+# docker system prune -f
+# docker compose down -v
+
+# Monthly reset:
+# docker compose down -v --rmi all --remove-orphans
+
+# Emergency:
+# docker stop $(docker ps -q)
+# docker system prune -a --volumes -f
