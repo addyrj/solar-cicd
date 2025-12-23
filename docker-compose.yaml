@@ -31,7 +31,7 @@ services:
     container_name: solar_backend
     restart: always
     ports:
-      - "5001:5000"  # Optional for direct access
+      - "5001:5000"
     environment:
       NODE_ENV: production
       HOST: ${DB_HOST}
@@ -55,20 +55,26 @@ services:
     networks:
       - solar_network
 
-# Change this section in frontend service
-frontend:
-  build:
-    context: ./frontend
-    dockerfile: Dockerfile
-    args:
-      REACT_APP_BASE_URL: ${REACT_APP_BASE_URL}
-      REACT_APP_IMAGE_URL: ${REACT_APP_IMAGE_URL}
-  container_name: solar_frontend
-  restart: always
-  ports:
-    - "80:80"  # This makes it accessible on port 80
-    - "443:443"  # Add if you want HTTPS later
-  depends_on:
-    - backend
-  networks:
-    - solar_network
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_BASE_URL: ${REACT_APP_BASE_URL}
+        REACT_APP_IMAGE_URL: ${REACT_APP_IMAGE_URL}
+    container_name: solar_frontend
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - solar_network
+
+volumes:
+  mysql_data:
+
+networks:
+  solar_network:
+    driver: bridge
