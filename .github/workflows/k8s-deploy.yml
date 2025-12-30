@@ -1,0 +1,42 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Build Docker images
+      run: |
+        docker build -t solar-frontend ./frontend
+        docker build -t solar-backend ./server
+        echo "✅ Docker images built"
+    
+    - name: Deploy to VPS Kubernetes
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          echo "🚀 Starting Kubernetes deployment..."
+          
+          # Go to project directory
+          cd /root/projects/solar-cicd
+          
+          # Pull latest code
+          git pull origin main
+          
+          # Make script executable
+          chmod +x k8s/apply-all.sh
+          
+          # Deploy to Kubernetes
+          cd k8s && ./apply-all.sh
+          
+          echo "✅ Deployment completed!"

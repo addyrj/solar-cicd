@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-config
+  namespace: solar-system
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS iot_solar;
+    USE iot_solar;
+    
+    -- Your existing tables from init.sql
+    -- Copy the content from your DB/init.sql here
